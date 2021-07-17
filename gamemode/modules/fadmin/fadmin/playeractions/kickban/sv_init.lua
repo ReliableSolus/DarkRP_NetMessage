@@ -167,10 +167,10 @@ local function Ban(ply, cmd, args)
         elseif stage == "update" then -- Update reason text
             if not args[4] or isstring(target) or not IsValid(target) then return false end
             ply.FAdminKickReason = args[4]
-            umsg.Start("FAdmin_ban_update", target)
-                umsg.Long(tonumber(args[3]))
-                umsg.String(tostring(args[4]))
-            umsg.End()
+            net.Start("FAdmin_ban_update")
+                net.WriteUInt(tonumber(args[3]), 32)
+                net.WriteString(tostring(args[4]))
+            net.Send(target)
         else
             time = tonumber(args[2]) or 0
             Reason = (Reason ~= "" and Reason) or args[3] or ""

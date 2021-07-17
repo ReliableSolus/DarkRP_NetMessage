@@ -29,21 +29,22 @@ function TOOL:LeftClick(trace)
     local Damage = ent.ShareEntityDamage1 or false
     local Toolgun = ent.ShareToolgun1 or false
 
+    -- Maybe it not need to replasment, really?
     -- This big usermessage will be too big if you select 63 players, since that will not happen I can't be arsed to solve it
-    umsg.Start("FPP_ShareSettings", ply)
-        umsg.Entity(ent)
-        umsg.Bool(Physgun)
-        umsg.Bool(GravGun)
-        umsg.Bool(PlayerUse)
-        umsg.Bool(Damage)
-        umsg.Bool(Toolgun)
+    net.Start("FPP_ShareSettings")
+        net.WriteEntity(ent)
+        net.WriteBool(Physgun)
+        net.WriteBool(GravGun)
+        net.WriteBool(PlayerUse)
+        net.WriteBool(Damage)
+        net.WriteBool(Toolgun)
         if ent.AllowedPlayers then
-            umsg.Long(#ent.AllowedPlayers)
+            net.WriteUInt(#ent.AllowedPlayers, 32)
             for k,v in pairs(ent.AllowedPlayers) do
-                umsg.Entity(v)
+                net.WriteEntity(v)
             end
         end
-    umsg.End()
+    net.Send(ply)
     return true
 end
 

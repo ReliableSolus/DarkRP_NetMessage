@@ -80,32 +80,32 @@ if SERVER then
         local RP = RecipientFilter()
         RP:AddAllPlayers()
 
-        umsg.Start("_DarkRP_CustomAnim", RP)
-        umsg.Entity(ply)
-        umsg.Short(Gesture)
-        umsg.End()
+        net.Start("_DarkRP_CustomAnim")
+        net.WriteEntity(ply)
+        net.WriteUInt(Gesture, 16)
+        net.Send(RP)
     end
     concommand.Add("_DarkRP_DoAnimation", CustomAnim)
     return
 end
 
-local function KeysAnims(um)
-    local ply = um:ReadEntity()
-    local act = um:ReadString()
+local function KeysAnims()
+    local ply = net.ReadEntity()
+    local act = net.ReadString()
 
     if not IsValid(ply) then return end
     ply:AnimRestartGesture(GESTURE_SLOT_CUSTOM, act == "usekeys" and ACT_GMOD_GESTURE_ITEM_PLACE or ACT_HL2MP_GESTURE_RANGE_ATTACK_FIST, true)
 end
-usermessage.Hook("anim_keys", KeysAnims)
+net.Receive("anim_keys", KeysAnims)
 
-local function CustomAnimation(um)
-    local ply = um:ReadEntity()
-    local act = um:ReadShort()
+local function CustomAnimation()
+    local ply = net.ReadEntity()
+    local act = net.ReadUInt(16)
 
     if not IsValid(ply) then return end
     ply:AnimRestartGesture(GESTURE_SLOT_CUSTOM, act, true)
 end
-usermessage.Hook("_DarkRP_CustomAnim", CustomAnimation)
+net.Receive("_DarkRP_CustomAnim", CustomAnimation)
 
 local AnimFrame
 local function AnimationMenu()

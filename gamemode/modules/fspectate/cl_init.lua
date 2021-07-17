@@ -396,7 +396,7 @@ end
 specEnt
 Spectate a player
 ---------------------------------------------------------------------------*/
-local function startSpectate(um)
+local function startSpectate()
     isRoaming = net.ReadBool()
     specEnt = net.ReadEntity()
     specEnt = IsValid(specEnt) and specEnt or nil

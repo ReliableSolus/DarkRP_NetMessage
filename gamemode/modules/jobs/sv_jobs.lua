@@ -177,10 +177,10 @@ function meta:changeTeam(t, force, suppressNotification, ignoreMaxMembers)
         util.Effect("entity_remove", effectdata)
     end
 
-    umsg.Start("OnChangedTeam", self)
-        umsg.Short(prevTeam)
-        umsg.Short(t)
-    umsg.End()
+    net.Start("OnChangedTeam")
+        net.WriteUInt(prevTeam, 16)
+        net.WriteUInt(t, 16)
+    net.Send(self)
     return true
 end
 
