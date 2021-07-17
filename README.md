@@ -1,5 +1,5 @@
 # DarkRP ![run-glualint](https://github.com/FPtje/DarkRP/workflows/run-glualint/badge.svg?branch=master)
-A roleplay gamemode for Garry's Mod.
+A roleplay gamemode for Garry's Mod. This version is rewritten for the net library.
 
 ## Getting DarkRP
 Please use either git or the workshop.
