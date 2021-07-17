@@ -19,18 +19,22 @@ local function Kick(ply, cmd, args)
         if not FAdmin.Access.PlayerHasPrivilege(ply, "Kick", target) then FAdmin.Messages.SendMessage(ply, 5, "No access!") return false end
         if IsValid(target) then
             if stage == "start" then
-                SendUserMessage("FAdmin_kick_start", target) -- Tell him he's getting kicked
+                net.Start("FAdmin_kick_start")
+                net.Send(target)
                 target:Lock() -- Make sure he can't remove the hook clientside and keep minging.
                 target:KillSilent()
             elseif stage == "cancel" then
-                SendUserMessage("FAdmin_kick_cancel", target) -- No I changed my mind, you can stay
+                net.Start("FAdmin_kick_cancel")
+                net.Send(target)
                 target:UnLock()
                 target:Spawn()
                 ply.FAdminKickReason = nil
             elseif stage == "update" then -- Update reason text
                 if not args[3] then return false end
                 ply.FAdminKickReason = args[3]
-                SendUserMessage("FAdmin_kick_update", target, args[3])
+                net.Start("FAdmin_kick_cancel")
+                net.WriteString(args[3])
+                net.Send(target)
             else
                 local name = IsValid(ply) and ply:IsPlayer() and ply:Nick() or "Console"
 
@@ -150,14 +154,16 @@ local function Ban(ply, cmd, args)
             return false
         end
         if stage == "start" and not isstring(target) and IsValid(target) then
-            SendUserMessage("FAdmin_ban_start", target) -- Tell him he's getting banned
+            net.Start("FAdmin_ban_start")
+            net.Send(target)
             target:Lock() -- Make sure he can't remove the hook clientside and keep minging.
             target:KillSilent()
             StartBannedUsers[target:SteamID()] = { author = ply }
 
         elseif stage == "cancel" then
             if not isstring(target) and IsValid(target) then
-                SendUserMessage("FAdmin_ban_cancel", target) -- No I changed my mind, you can stay
+                net.Start("FAdmin_ban_cancel")
+                net.Send(target)
                 target:UnLock()
                 target:Spawn()
                 StartBannedUsers[target:SteamID()] = nil
@@ -306,7 +312,8 @@ hook.Add("PlayerDisconnected", "FAdmin bans", function(ply)
         StartBannedUsers[k] = nil
         local target = player.GetBySteamID(k)
         if not IsValid(target) then continue end
-        SendUserMessage("FAdmin_ban_cancel", target)
+        net.Start("FAdmin_ban_cancel")
+        net.Send(target)
         target:UnLock()
         target:Spawn()
     end

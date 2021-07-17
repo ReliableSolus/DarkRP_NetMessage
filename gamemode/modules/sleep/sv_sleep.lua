@@ -109,7 +109,9 @@ function DarkRP.toggleSleep(player, command)
 
         if player.blackScreen then
             player.blackScreen = false
-            SendUserMessage("blackScreen", player, false)
+            net.Start("blackScreen")
+            net.WriteBool(false)
+            net.Send(player)
         end
 
         if command == true then
@@ -173,7 +175,9 @@ function DarkRP.toggleSleep(player, command)
 
         if not player.blackScreen then
             player.blackScreen = true
-            SendUserMessage("blackScreen", player, true)
+            net.Start("blackScreen")
+            net.WriteBool(true)
+            net.Send(player)
         end
 
         player.SleepSound = CreateSound(ragdoll, "npc/ichthyosaur/water_breath.wav")
